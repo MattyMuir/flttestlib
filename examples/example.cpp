@@ -3,19 +3,20 @@
 
 #include <flttestlib.h>
 
-double Approx(double x)
+__m256d MySin(__m256d x)
 {
-	return sin(x);
+	return x;
 }
 
-std::pair<double, double> Exact(double x)
+__m256 MySin(__m256 x)
 {
-	double v = sin(x);
-	return { std::nextafter(v, -INFINITY), std::nextafter(v, INFINITY) };
+	return x;
 }
 
 int main()
 {
-	auto [inf, sup] = MakeBounded<double, mpfr_pow>(3.0, 2.1);
-	std::cout << std::format("[{}, {}]\n", inf, sup);
+	static std::mt19937_64 gen{ std::random_device{}() };
+	static std::uniform_real_distribution<double> dist{ 0, 1e-5 };
+
+	MaxULPRounded(MakeBounded<double, mpfr_sin>, MakeSerial<double, MySin>, []() { return dist(gen); }, 0);
 }

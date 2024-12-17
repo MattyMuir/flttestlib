@@ -1,6 +1,8 @@
 #pragma once
 #include <limits>
 
+#include <immintrin.h>
+
 #ifndef FTL_NO_MPFR
 #include <mpfr.h>
 
@@ -62,3 +64,28 @@ std::pair<Ty, Ty> MakeBounded(Ty x, Ty y)
 	throw;
 }
 #endif
+
+template <typename Ty>
+using SimdType = std::conditional_t<std::is_same_v<Ty, float>, __m256, __m256d>;
+template <typename Ty>
+using SimdFunc = SimdType<Ty>(*)(SimdType<Ty>);
+
+template <typename Ty, SimdFunc<Ty> Func>
+Ty MakeSerial(Ty x)
+{
+	// Broadcast input to pack
+	SimdType<Ty> p;
+	if constexpr (std::is_same_v<Ty, float>)
+		p = _mm256_set1_ps(x);
+	else
+		p = _mm256_set1_pd(x);
+
+	// Evaluate function
+	SimdType<Ty> res = Func(p);
+
+	// Extract result from pack
+	if constexpr (std::is_same_v<Ty, float>)
+		return std::bit_cast<Ty>(_mm256_extract_epi32(_mm256_castps_si256(res), 0));
+	else
+		return std::bit_cast<Ty>(_mm256_extract_epi64(_mm256_castpd_si256(res), 0));
+}
