@@ -3,11 +3,19 @@
 
 #include <flttestlib.h>
 
+double Approx(double x)
+{
+	return sin(x);
+}
+
+std::pair<double, double> Exact(double x)
+{
+	double v = sin(x);
+	return { std::nextafter(v, -INFINITY), std::nextafter(v, INFINITY) };
+}
+
 int main()
 {
-	//1.0996832909591162e-28   xn: 1.099683290959118e-28
-	double x	= 1.0996832909591162e-28;
-	double xn	= 1.099683290959118e-28;
-
-	auto dist = ULPDistance(x, xn);
+	auto [inf, sup] = MakeBounded<double, mpfr_pow>(3.0, 2.1);
+	std::cout << std::format("[{}, {}]\n", inf, sup);
 }

@@ -1,4 +1,6 @@
 #pragma once
+#include <iostream>
+#include <format>
 #include <type_traits>
 #include <bit>
 #include <limits>
@@ -40,6 +42,7 @@ template <typename Ty, typename ITy>
 UIntType<Ty> ULPDistance(Ty approx, ITy exact)
 {
 	auto [inf, sup] = exact;
+	static_assert(std::is_same_v<Ty, decltype(inf)>);
 	return std::max(ULPDistance(approx, inf), ULPDistance(approx, sup));
 }
 
@@ -52,4 +55,39 @@ IntType<Ty> ULPDistanceSigned(Ty x, Ty y)
 	if (x > y)
 		return -(Int)ULPDistance(y, x);
 	return (Int)ULPDistance(x, y);
+}
+
+/// Runs many random tests and returns the maximum error found
+auto MaxULPRounded(auto referenceFunc, auto approxFunc, auto randFunc, size_t iter)
+{
+	using Ty = std::invoke_result_t<decltype(randFunc)>;
+	using Int = UIntType<Ty>;
+
+	Int maxError = 0;
+	for (uint64_t i = 0; (i < iter) || !iter; i++)
+	{
+		// Sample random input
+		Ty x = randFunc();
+
+		// Evaluate approx and exact
+		Ty approx = approxFunc(x);
+		auto [inf, sup] = referenceFunc(x);
+
+		// Check for bad NaN
+		if (!std::isfinite(approx) && std::isfinite(inf) && std::isfinite(sup))
+		{
+			std::cout << std::format("Bad NaN: {}\n", x);
+			return (Int)0;
+		}
+
+		// Update maxError
+		uint32_t error = ULPDistance(approx, std::pair<Ty, Ty>{ inf, sup });
+		if (error > maxError)
+		{
+			maxError = error;
+			if (!iter) std::cout << std::format("error: {} x: {}\n", maxError, x);
+		}
+	}
+
+	return maxError;
 }

@@ -12,7 +12,7 @@ public:
 	ReciprocalDistribution(Ty min_, Ty max_)
 		: min(min_), max(max_), dist(0, 1)
 	{
-		assert(min <= max 0 && "min must be smaller than max");
+		assert(min <= max && "min must be smaller than max");
 		assert(min > 0 && max > 0 && "Endpoints must be strictly positive");
 		assert(std::isfinite(min) && std::isfinite(max) && "Endpoints must be finite");
 
