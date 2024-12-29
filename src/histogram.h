@@ -3,6 +3,8 @@
 #include <format>
 #include <random>
 
+#include "ulp.h"
+
 auto IdentityMap(auto x) { return x; }
 
 template <typename Ty>
@@ -18,7 +20,7 @@ void ULPHistogram(auto referenceFunc, auto approxFunc, Ty min, Ty max, Ty step, 
 		Ty high = low + step;
 		std::uniform_real_distribution<Ty> dist{ low, high };
 
-		uint64_t err = MaxULPRounded(referenceFunc, approxFunc, [&]() { return map(dist(gen)); }, iter);
+		UIntType<Ty> err = MaxULPRounded(referenceFunc, approxFunc, [&]() { return map(dist(gen)); }, iter);
 		std::cout << std::format("{:.5f},{:.5f},{}\n", low, high, err);
 	}
 }
