@@ -66,6 +66,15 @@ std::pair<Ty, Ty> MakeBounded(Ty x, Ty y)
 #endif
 
 template <typename Ty>
+using FuncType1D = Ty(*)(Ty);
+
+template <typename Ty, FuncType1D<Ty> Func>
+Ty Overload(Ty x)
+{
+	return Func(x);
+}
+
+template <typename Ty>
 using SimdType = std::conditional_t<std::is_same_v<Ty, float>, __m256, __m256d>;
 template <typename Ty>
 using SimdFunc = SimdType<Ty>(*)(SimdType<Ty>);
