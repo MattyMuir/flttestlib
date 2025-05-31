@@ -23,7 +23,8 @@ install(DIRECTORY "../include"
 install(DIRECTORY "../src"
         DESTINATION ${CMAKE_INSTALL_PREFIX}
         FILES_MATCHING
-        PATTERN "*.h")
+        PATTERN "*.h"
+        PATTERN "*.hpp")
 
 # Configure the main config.cmake file
 configure_package_config_file(

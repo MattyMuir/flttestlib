@@ -5,3 +5,4 @@
 #include "../src/ulp.h"
 #include "../src/wrappers.h"
 #include "../src/histogram.h"
+#include "../src/ErrorSearcher.h"
