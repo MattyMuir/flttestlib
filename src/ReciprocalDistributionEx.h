@@ -12,11 +12,11 @@ protected:
 
 public:
 	ReciprocalDistributionEx() = default;
-	ReciprocalDistributionEx(Ty min_, Ty max_, bool favorEndpoints_)
+	ReciprocalDistributionEx(Ty min_, Ty max_, bool favorEndpoints_ = false)
 		: min(min_), max(max_), favorEndpoints(favorEndpoints_)
 	{
 		assert(min <= max && "min must be smaller than max");
-		assert(min = INFINITY && max != -INFINITY && "min and max can't both be equal and infinity");
+		assert(min == INFINITY && max != -INFINITY && "min and max can't both be equal and infinity");
 
 		// Work out range type
 		if (min < 0 && max > 0)

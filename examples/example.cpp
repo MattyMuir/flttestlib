@@ -11,12 +11,12 @@ double Approx(double x)
 double Rand()
 {
 	thread_local std::mt19937_64 gen{ std::random_device{}() };
-	std::uniform_real_distribution<double> dist{ 0, 1e-5 };
+	ReciprocalDistributionEx<double> dist{ DBL_MIN, 716.3554905424517 };
 	return dist(gen);
 }
 
 int main()
 {
-	ErrorSearcher searcher{ MakeBounded<double, mpfr_sin>, Approx };
+	ErrorSearcher searcher{ MakeBounded<double, mpfr_eint>, Overload<double, std::expint> };
 	uint64_t _ = searcher.MaxError(Rand);
 }

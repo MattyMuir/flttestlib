@@ -131,3 +131,6 @@ protected:
 // Deduction guides
 template <typename ReferenceFun, typename ApproxFun>
 ErrorSearcher(ReferenceFun r, ApproxFun a) -> ErrorSearcher<decltype(a({})), ReferenceFun, ApproxFun>;
+
+template <typename ReferenceFun, typename ApproxFun>
+ErrorSearcher(ReferenceFun r, ApproxFun a, size_t n) -> ErrorSearcher<decltype(a({})), ReferenceFun, ApproxFun > ;
